@@ -1,0 +1,77 @@
+const doPost = (request = {}) => {
+  const { parameter, postData: { contents, type } = {} } = request;
+  if (type === 'application/json') {
+	const jsonData = JSON.parse(contents);
+	// check quota first
+	var emailQuotaRemaining = MailApp.getRemainingDailyQuota();
+	if (emailQuotaRemaining == 0) {
+  	result = {
+    	status: 'error',
+    	message: 'Your daily quota is exceeded.'
+  	};
+  	return ContentService.createTextOutput(JSON.stringify(result));
+	}
+
+	to = jsonData.to ? jsonData.to : '';
+	cc = jsonData.cc ? jsonData.cc : '';
+	bcc = jsonData.bcc ? jsonData.bcc : '';
+	subject = jsonData.subject ? jsonData.subject : '';
+	message = jsonData.body ? jsonData.body : '';
+	name = jsonData.name ? jsonData.name : '';
+	replyTo = jsonData.replyTo ? jsonData.replyTo : '';
+
+	if(to == '' || subject == '' || message == '') {
+  	result = {
+    	status: 'error',
+    	message: 'to, subject and message are required.'
+  	};
+  	return ContentService.createTextOutput(JSON.stringify(result));
+	}
+
+	arr_email = {to: to, subject: subject, htmlBody: message};
+
+	if(name != '') {
+  	arr_email.name = name;
+	}
+	if(cc != '') {
+  	arr_email.cc = cc;
+	}
+	if(bcc != '') {
+  	arr_email.bcc = bcc;
+	}
+	if(replyTo != '') {
+  	arr_email.replyTo = replyTo;
+	}
+	try {
+  	attachements = jsonData.files ? jsonData.files : [];
+  	if(attachements.length > 0) {
+    	arr_files = [];
+    	for(var i = 0; i < attachements.length; i++) {
+      	url = attachements[i];
+      	response = UrlFetchApp.fetch(url);
+      	blob = response.getBlob();
+      	ctype = blob.getContentType();
+      	filename = blob.getName();
+      	file = blob.setContentType(ctype).setName(filename);
+      	arr_files.push(file);
+    	}
+    	arr_email.attachments = arr_files;
+  	}
+
+  	MailApp.sendEmail(arr_email);
+
+  	result = {
+    	status: 'success',
+    	message: 'Email is sent successfully.',
+    	email_quota_remain: MailApp.getRemainingDailyQuota()
+  	};
+  	return ContentService.createTextOutput(JSON.stringify(result));
+	} catch(e) {
+  	result = {
+    	status: 'error',
+    	message: e.message
+  	};
+  	return ContentService.createTextOutput(JSON.stringify(result));
+	}
+  }
+}
