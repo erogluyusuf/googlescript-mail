@@ -317,7 +317,7 @@ Google Apps Script Projesi Oluşturma
 
 2.   Yeni bir proje oluşturun.
 
-2.   Aşağıdaki kodu yapıştırın ve kaydedin.
+3.   Aşağıdaki kodu yapıştırın ve kaydedin.
 ```
 const doPost = (request = {}) => {
   const { parameter, postData: { contents, type } = {} } = request;
@@ -397,6 +397,14 @@ const doPost = (request = {}) => {
   }
 }
 ```
+4.    Dosyanızı kaydedin ve “Deploy” → “Yeni Dağıtım” seçeneğine tıklayın.
+5.    “Web Uygulaması” olarak dağıtın ve herkese açık hale getirin.
+6.    Elde ettiğiniz URL’yi kopyalayın.
+7.    Web Uygulaması başlığı altında belirtilen URL kopyalanıp Mail.php de belirtilen değişkene yapıştırılmalıdır.
+
+
+
+![Google Apps Script](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*hUewH6rYMeHZOaZLSPDpJg.png)
 
 
 Google Apps Script ile E-Posta Göndermenin Avantajları
